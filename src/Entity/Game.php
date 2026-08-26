@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\GameRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+use App\Enum\GameType;
+
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 class Game
 {
@@ -24,7 +26,7 @@ class Game
     #[ORM\JoinColumn(nullable: false)]
     private ?City $startingCity = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(enumType: GameType::class)]
     private ?string $type = null;
 
     #[ORM\Column]
