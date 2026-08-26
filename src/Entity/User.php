@@ -41,7 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Subscription>
      */
     #[ORM\OneToMany(targetEntity: Subscription::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $subscription;
+    private Collection $subscriptions;
 
     /**
      * @var Collection<int, Game>
@@ -51,7 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->subscription = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
         $this->games = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
@@ -156,13 +156,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getSubscription(): Collection
     {
-        return $this->subscription;
+        return $this->subscriptions;
     }
 
     public function addSubscription(Subscription $subscription): static
     {
-        if (!$this->subscription->contains($subscription)) {
-            $this->subscription->add($subscription);
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions->add($subscription);
             $subscription->setUser($this);
         }
 
@@ -171,7 +171,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeSubscription(Subscription $subscription): static
     {
-        if ($this->subscription->removeElement($subscription)) {
+        if ($this->subscriptions->removeElement($subscription)) {
             // set the owning side to null (unless already changed)
             if ($subscription->getUser() === $this) {
                 $subscription->setUser(null);
