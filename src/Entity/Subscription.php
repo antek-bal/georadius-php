@@ -5,6 +5,9 @@ namespace App\Entity;
 use App\Repository\SubscriptionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+use App\Enum\SubscriptionStatus;
+use App\Enum\SubscriptionType;
+
 #[ORM\Entity(repositoryClass: SubscriptionRepository::class)]
 class Subscription
 {
@@ -17,10 +20,10 @@ class Subscription
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(enumType: SubscriptionType::class)]
     private ?string $planType = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(enumType: SubscriptionStatus::class)]
     private ?string $status = null;
 
     #[ORM\Column]
