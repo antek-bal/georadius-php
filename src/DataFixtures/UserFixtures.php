@@ -44,6 +44,10 @@ class UserFixtures extends Fixture
 
             $stats = new Stats();
             $stats->setUser($user);
+            $stats->setGamesPlayed(0);
+            $stats->setHighScore(0);
+            $stats->setDailyStreak(0);
+
             $manager->persist($stats);
         }
 
