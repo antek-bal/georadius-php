@@ -49,15 +49,15 @@ class CityFixtures extends Fixture
             ]
         ];
 
-        foreach ($cities as $city) {
-            $cityExample = new City();
-            $cityExample->setName($city['name']);
-            $cityExample->setCountryCode(($city['countryCode']));
-            $cityExample->setLatitude($city['latitude']);
-            $cityExample->setLongitude($city['longitude']);
-            $cityExample->setIsStartingCity($city['isStartingCity']);
+        foreach ($cities as $data) {
+            $city = new City();
+            $city->setName($data['name']);
+            $city->setCountryCode(($data['countryCode']));
+            $city->setLatitude($data['latitude']);
+            $city->setLongitude($data['longitude']);
+            $city->setIsStartingCity($data['isStartingCity']);
 
-            $manager->persist($cityExample);
+            $manager->persist($city);
         }
 
         $manager->flush();
