@@ -21,10 +21,10 @@ class City
     private ?string $countryCode = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7)]
-    private ?string $latitude = null;
+    private ?float $latitude = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7)]
-    private ?string $longitude = null;
+    private ?float $longitude = null;
 
     #[ORM\Column]
     private ?bool $isStartingCity = null;
