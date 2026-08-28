@@ -2,10 +2,9 @@
 
 namespace App\Entity;
 
+use App\Enum\GameType;
 use App\Repository\GameRepository;
 use Doctrine\ORM\Mapping as ORM;
-
-use App\Enum\GameType;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 class Game
