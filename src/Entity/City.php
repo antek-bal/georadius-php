@@ -58,24 +58,24 @@ class City
         return $this;
     }
 
-    public function getLatitude(): ?string
+    public function getLatitude(): ?float
     {
         return $this->latitude;
     }
 
-    public function setLatitude(string $latitude): static
+    public function setLatitude(float $latitude): static
     {
         $this->latitude = $latitude;
 
         return $this;
     }
 
-    public function getLongitude(): ?string
+    public function getLongitude(): ?float
     {
         return $this->longitude;
     }
 
-    public function setLongitude(string $longitude): static
+    public function setLongitude(float $longitude): static
     {
         $this->longitude = $longitude;
 
