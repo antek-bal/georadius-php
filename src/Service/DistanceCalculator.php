@@ -18,10 +18,11 @@ class DistanceCalculator
         $latDelta = $latTo - $latFrom;
         $lonDelta = $lonTo - $lonFrom;
 
-        $angle = pow(sin($latDelta/2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta/2), 2);
-        $centralAngle = 2 * atan2(sqrt($angle), sqrt(1-$angle));
+        $angle = pow(sin($latDelta / 2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2);
+        $centralAngle = 2 * atan2(sqrt($angle), sqrt(1 - $angle));
 
         $result = self::EARTH_RADIUS_KM * $centralAngle;
+
         return round($result, 2);
     }
 }
