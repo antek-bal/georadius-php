@@ -2,11 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\SubscriptionRepository;
-use Doctrine\ORM\Mapping as ORM;
-
 use App\Enum\SubscriptionStatus;
 use App\Enum\SubscriptionType;
+use App\Repository\SubscriptionRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SubscriptionRepository::class)]
 class Subscription

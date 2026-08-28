@@ -11,9 +11,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserFixtures extends Fixture
 {
     public function __construct(
-        private readonly UserPasswordHasherInterface $hasher
-    ) {}
-    
+        private readonly UserPasswordHasherInterface $hasher,
+    ) {
+    }
+
     public function load(ObjectManager $manager): void
     {
         $users = [
@@ -21,14 +22,14 @@ class UserFixtures extends Fixture
                 'email' => 'andrew@example.com',
                 'password' => 'password123!',
                 'username' => 'andrewG',
-                'roles' => ['ROLE_ADMIN']
+                'roles' => ['ROLE_ADMIN'],
             ],
             [
                 'email' => 'johndoe@gmail.com',
                 'password' => 'pass_123456',
                 'username' => 'JohnDoe',
-                'roles' => ['ROLE_USER']
-            ]
+                'roles' => ['ROLE_USER'],
+            ],
         ];
 
         foreach ($users as $data) {
@@ -39,7 +40,7 @@ class UserFixtures extends Fixture
 
             $hashedPassword = $this->hasher->hashPassword($user, $data['password']);
             $user->setPassword($hashedPassword);
-            
+
             $manager->persist($user);
 
             $stats = new Stats();
