@@ -1,4 +1,6 @@
 {
+    "name": "antekbal/georadius-php",
+    "description": "Georadius, geography game backend in Symfony",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
