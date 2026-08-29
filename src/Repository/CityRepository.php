@@ -23,12 +23,13 @@ class CityRepository extends ServiceEntityRepository
             ->setParameter('val', true)
             ->getQuery()
             ->getResult();
-        
+
         if (empty($cities)) {
             return null;
         }
 
         $randomIndex = array_rand($cities);
+
         return $cities[$randomIndex];
     }
 }
