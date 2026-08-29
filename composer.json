@@ -61,7 +61,9 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "format": "php-cs-fixer fix",
+        "test": "phpunit"
     },
     "conflict": {
         "symfony/symfony": "*"
