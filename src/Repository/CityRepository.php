@@ -18,18 +18,44 @@ class CityRepository extends ServiceEntityRepository
 
     public function getRandomCity(): ?City
     {
+        $cities = $this->getStartingCities();
+        $randomIndex = array_rand($cities);
+
+        return $cities[$randomIndex];
+    }
+
+    public function getRandomCityFromCountry(string $countryCode): ?City
+    {
+        $cities = $this->getStartingCities();
+
+        $filteredCities = array_filter($cities, function(City $city) use ($countryCode) {
+            return $city->getCountryCode() === $countryCode;
+        });
+        
+        if (empty($filteredCities)) {
+            return null;
+        }
+
+        $randomIndex = array_rand($filteredCities);
+
+        return $filteredCities[$randomIndex];
+    }
+
+    /**
+     * @return City[]
+     */
+    private function getStartingCities(): ?array
+    { 
         $cities = $this->createQueryBuilder('c')
             ->andWhere('c.isStartingCity = :val')
             ->setParameter('val', true)
             ->getQuery()
             ->getResult();
-
+        
         if (empty($cities)) {
             return null;
         }
 
-        $randomIndex = array_rand($cities);
-
-        return $cities[$randomIndex];
+        return $cities;
     }
 }
