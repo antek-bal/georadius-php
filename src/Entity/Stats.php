@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
 use App\Repository\StatsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +26,11 @@ class Stats
 
     #[ORM\Column]
     private ?int $dailyStreak = 0;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
 
     public function getId(): ?int
     {

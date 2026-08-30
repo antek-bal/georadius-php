@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Stats;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +17,12 @@ class StatsRepository extends ServiceEntityRepository
         parent::__construct($registry, Stats::class);
     }
 
-    //    /**
-    //     * @return Stats[] Returns an array of Stats objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Stats
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function getStatsByUser(User $user): ?Stats
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.user = :val')
+            ->setParameter('val', $user)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
