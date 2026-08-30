@@ -53,7 +53,7 @@ class CityRepository extends ServiceEntityRepository
             ->setParameter('val', $cityName)
             ->getQuery()
             ->getResult();
-            
+
         return $city[0] ?? null;
     }
 
