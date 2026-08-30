@@ -40,6 +40,12 @@ class Game
     #[ORM\Column]
     private ?float $maxRadius = null;
 
+    #[ORM\Column]
+    private ?int $currentRound = null;
+
+    #[ORM\Column]
+    private ?int $attemptsLeft = null;
+
     public function __construct(User $user, City $startingCity, GameType $type)
     {
         $this->user = $user;
@@ -49,6 +55,8 @@ class Game
         $this->score = 0;
         $this->durationSec = 0;
         $this->maxRadius = 0;
+        $this->currentRound = 1;
+        $this->attemptsLeft = 3;
     }
 
     public function getId(): ?int
@@ -148,6 +156,30 @@ class Game
     public function setMaxRadius(float $maxRadius): static
     {
         $this->maxRadius = $maxRadius;
+
+        return $this;
+    }
+
+    public function getCurrentRound(): ?int
+    {
+        return $this->currentRound;
+    }
+
+    public function setCurrentRound(int $currentRound): static
+    {
+        $this->currentRound = $currentRound;
+
+        return $this;
+    }
+
+    public function getAttemptsLeft(): ?int
+    {
+        return $this->attemptsLeft;
+    }
+
+    public function setAttemptsLeft(int $attemptsLeft): static
+    {
+        $this->attemptsLeft = $attemptsLeft;
 
         return $this;
     }
