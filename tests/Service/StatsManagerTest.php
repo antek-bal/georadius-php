@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
+use App\Entity\City;
 use App\Entity\Game;
+use App\Entity\Stats;
 use App\Entity\User;
 use App\Enum\GameType;
 use App\Service\StatsManager;
@@ -22,7 +24,8 @@ class StatsManagerTest extends KernelTestCase
         $container = static::getContainer();
 
         $this->entityManager = $container->get(EntityManagerInterface::class);
-        $this->statsManager = $container->get(StatsManager::class);
+        $statsRepository = $this->entityManager->getRepository(Stats::class);
+        $this->statsManager = new StatsManager($statsRepository, $this->entityManager);
 
         $this->entityManager->createQuery('DELETE FROM App\Entity\Game')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\Stats')->execute();
@@ -33,6 +36,9 @@ class StatsManagerTest extends KernelTestCase
     {
         $user = new User('test@test.com', 'password', 'tester', ['ROLE_USER']);
         $this->entityManager->persist($user);
+
+        $city = new City('Warszawa', 'PL', 52.2297, 21.0122, true);
+        $this->entityManager->persist($city);
         $this->entityManager->flush();
 
         $game = new Game($user, $city, GameType::FREE);
