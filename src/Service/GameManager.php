@@ -10,9 +10,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class GameManager
 {
+    private const BASE_RADIUS = 100.0;
+
     public function __construct(
         private CityRepository $repository,
         private EntityManagerInterface $manager,
+        private DistanceCalculator $calculator,
     ) {
     }
 
@@ -26,9 +29,47 @@ class GameManager
 
         $game = new Game($user, $city, $type);
 
-        $this->manager->persist($game);
-        $this->manager->flush();
+        $this->save($game);
 
         return $game;
+    }
+
+    public function guess(string $cityName, Game $game): bool
+    {
+        $city = $this->repository->findCityByName($cityName);
+
+        if (null === $city) {
+            return false;
+        }
+
+        $startingCity = $game->getStartingCity();
+        $round = $game->getCurrentRound();
+        $attempts = $game->getAttemptsLeft();
+
+        $distance = $this->calculator->calculate($city->getLatitude(), $city->getLongitude(), $startingCity->getLatitude(), $startingCity->getLongitude());
+        $currentRadius = self::BASE_RADIUS * $round;
+
+        if ($distance >= $currentRadius - self::BASE_RADIUS && $distance < $currentRadius) {
+            $game->setCurrentRound(++$round);
+            $game->setAttemptsLeft(3);
+            $this->save($game);
+
+            return true;
+        }
+
+        if (--$attempts < 1) {
+            // end game
+        }
+
+        $game->setAttemptsLeft($attempts);
+        $this->save($game);
+
+        return false;
+    }
+
+    private function save(Game $game): void
+    {
+        $this->manager->persist($game);
+        $this->manager->flush();
     }
 }
