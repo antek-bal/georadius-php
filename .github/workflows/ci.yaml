@@ -46,6 +46,7 @@ jobs:
       - name: Setup test database
         env:
           APP_ENV: test
+<<<<<<< HEAD
           DATABASE_URL: postgresql://app:!ChangeMe!@127.0.0.1:5432/georadius?serverVersion=16&charset=utf8
         run: |
           php bin/console doctrine:database:create --if-not-exists
@@ -55,6 +56,15 @@ jobs:
         env:
           APP_ENV: test
           APP_DEBUG: '0'
+=======
+          DATABASE_URL: postgresql://app:!ChangeMe!@127.0.0.1:5432/app?serverVersion=16&charset=utf8
+        run: |
+          php bin/console doctrine:database:create --if-not-exists
+          php bin/console doctrine:schema:create
+          php bin/console doctrine:fixtures:load --no-interaction
+
+      - name: Run test suite with coverage
+>>>>>>> feat/services
         run: php bin/phpunit --coverage-clover clover.xml --coverage-text
 
       # - name: Enforce 90% code coverage
