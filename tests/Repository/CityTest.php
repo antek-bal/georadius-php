@@ -57,10 +57,33 @@ class CityTest extends KernelTestCase
         $this->assertNull($city);
     }
 
+    public function testFindCityByNameWithMatch(): void
+    {
+        $this->loadTestCities();
+        $city = $this->repository->findCityByName('Warsaw');
+
+        $this->assertTrue($city);
+    }
+
+    public function testFindCityByNameWithoutMatch(): void
+    {
+        $this->loadTestCities();
+        $city = $this->repository->findCityByName('Berlin');
+
+        $this->assertFalse($city);
+    }
+
+    public function testFindCityByNameWithEmptyDatabase(): void
+    {
+        $city = $this->repository->findCityByName('Warsaw');
+
+        $this->assertFalse($city);
+    }
+
     private function loadTestCities(): void
     {
         $warsaw = new City();
-        $warsaw->setName('Warszawa');
+        $warsaw->setName('Warsaw');
         $warsaw->setCountryCode('PL');
         $warsaw->setLatitude(52.2297);
         $warsaw->setLongitude(21.0122);
