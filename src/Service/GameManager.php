@@ -58,13 +58,27 @@ class GameManager
         }
 
         if (--$attempts < 1) {
-            // end game
+            $this->end($game, $round - 1);
         }
 
         $game->setAttemptsLeft($attempts);
         $this->save($game);
 
         return false;
+    }
+
+    public function end(Game $game, int $score): void
+    {
+        $start = $game->getPlayedAt();
+        $end = new \DateTimeImmutable();
+        $duration = $end->getTimestamp() - $start->getTimestamp();
+
+        $game
+            ->setScore($score)
+            ->setDurationSec($duration)
+            ->setMaxRadius($score*self::BASE_RADIUS);
+        
+        $this->save($game);
     }
 
     private function save(Game $game): void
