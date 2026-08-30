@@ -84,19 +84,8 @@ class CityTest extends KernelTestCase
 
     private function loadTestCities(): void
     {
-        $warsaw = new City();
-        $warsaw->setName('Warsaw');
-        $warsaw->setCountryCode('PL');
-        $warsaw->setLatitude(52.2297);
-        $warsaw->setLongitude(21.0122);
-        $warsaw->setIsStartingCity(true);
-
-        $norilsk = new City();
-        $norilsk->setName('Norilsk');
-        $norilsk->setCountryCode('RU');
-        $norilsk->setLatitude(69.3535);
-        $norilsk->setLongitude(88.2027);
-        $norilsk->setIsStartingCity(false);
+        $warsaw = new City('Warsaw', 'PL', 52.2297, 21.0122, true);
+        $norilsk = new City('Norilsk', 'RU', 69.3535, 88.2027, false);
 
         $this->entityManager->persist($warsaw);
         $this->entityManager->persist($norilsk);
