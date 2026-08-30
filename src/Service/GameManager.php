@@ -8,17 +8,17 @@ use App\Enum\GameType;
 use App\Repository\CityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class GameStart
+class GameManager
 {
     public function __construct(
         private CityRepository $repository,
-        private EntityManagerInterface $manager
-    ) {}
-
+        private EntityManagerInterface $manager,
+    ) {
+    }
 
     public function start(User $user, GameType $type, ?string $countryCode = null): ?Game
     {
-        $city = $type === GameType::FREE ? $this->repository->getRandomCityFromCountry($countryCode) : $this->repository->getRandomCity();
+        $city = GameType::FREE === $type ? $this->repository->getRandomCityFromCountry($countryCode) : $this->repository->getRandomCity();
 
         if (null === $city) {
             return null;
