@@ -19,6 +19,10 @@ class StatsRepository extends ServiceEntityRepository
 
     public function getStatsByUser(User $user): ?Stats
     {
+        if (null === $user->getId()) {
+            return null;
+        }
+
         return $this->createQueryBuilder('s')
             ->andWhere('s.user = :val')
             ->setParameter('val', $user)
