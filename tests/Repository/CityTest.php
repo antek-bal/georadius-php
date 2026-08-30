@@ -32,6 +32,7 @@ class CityTest extends KernelTestCase
         $city = $this->repository->getRandomCity();
 
         $this->assertNotNull($city);
+        $this->assertTrue($city->isStartingCity());
     }
 
     public function testGetRandomCityWithoutPossiblieStartingCities(): void
@@ -48,6 +49,7 @@ class CityTest extends KernelTestCase
 
         $this->assertNotNull($city);
         $this->assertEquals($city->getCountryCode(), 'PL');
+        $this->assertTrue($city->isStartingCity());
     }
 
     public function testGetRandomCityWithoutPossibleStartingCitiesFromCounry(): void
