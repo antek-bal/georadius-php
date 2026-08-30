@@ -54,6 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
         $this->username = $username;
         $this->roles = $roles;
+        $this->stats = new Stats($this);
         $this->subscriptions = new ArrayCollection();
         $this->games = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
