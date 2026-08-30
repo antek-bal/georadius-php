@@ -36,6 +36,10 @@ class GameManager
 
     public function guess(string $cityName, Game $game): bool
     {
+        if ($game->getDurationSec() > 0) {
+            return false;
+        }
+
         $city = $this->repository->findCityByName($cityName);
 
         if (null === $city) {
@@ -58,7 +62,10 @@ class GameManager
         }
 
         if (--$attempts < 1) {
+            $game->setAttemptsLeft(0);
             $this->end($game, $round - 1);
+
+            return false;
         }
 
         $game->setAttemptsLeft($attempts);
@@ -76,8 +83,8 @@ class GameManager
         $game
             ->setScore($score)
             ->setDurationSec($duration)
-            ->setMaxRadius($score*self::BASE_RADIUS);
-        
+            ->setMaxRadius($score * self::BASE_RADIUS);
+
         $this->save($game);
     }
 
