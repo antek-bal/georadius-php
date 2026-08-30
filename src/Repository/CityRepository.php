@@ -46,6 +46,17 @@ class CityRepository extends ServiceEntityRepository
         return $filteredCities[$randomIndex];
     }
 
+    public function findCityByName(string $cityName): bool
+    {
+        $city = $this->createQueryBuilder('c')
+            ->andWhere('c.name = :val')
+            ->setParameter('val', $cityName)
+            ->getQuery()
+            ->getResult();
+
+        return !empty($city);
+    }
+
     /**
      * @return City[]
      */
