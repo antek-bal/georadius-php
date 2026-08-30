@@ -28,10 +28,10 @@ class CityRepository extends ServiceEntityRepository
     {
         $cities = $this->getStartingCities();
 
-        $filteredCities = array_filter($cities, function(City $city) use ($countryCode) {
+        $filteredCities = array_filter($cities, function (City $city) use ($countryCode) {
             return $city->getCountryCode() === $countryCode;
         });
-        
+
         if (empty($filteredCities)) {
             return null;
         }
@@ -45,13 +45,13 @@ class CityRepository extends ServiceEntityRepository
      * @return City[]
      */
     private function getStartingCities(): ?array
-    { 
+    {
         $cities = $this->createQueryBuilder('c')
             ->andWhere('c.isStartingCity = :val')
             ->setParameter('val', true)
             ->getQuery()
             ->getResult();
-        
+
         if (empty($cities)) {
             return null;
         }
