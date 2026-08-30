@@ -26,7 +26,7 @@ class Game
     private ?City $startingCity = null;
 
     #[ORM\Column(enumType: GameType::class)]
-    private ?string $type = null;
+    private ?GameType $type = null;
 
     #[ORM\Column]
     private ?int $score = null;
@@ -40,9 +40,15 @@ class Game
     #[ORM\Column]
     private ?float $maxRadius = null;
 
-    public function __construct()
+    public function __construct(User $user, City $startingCity, GameType $type)
     {
+        $this->user = $user;
+        $this->startingCity = $startingCity;
+        $this->type = $type;
         $this->playedAt = new \DateTimeImmutable();
+        $this->score = 0;
+        $this->durationSec = 0;
+        $this->maxRadius = 0;
     }
 
     public function getId(): ?int
@@ -86,12 +92,12 @@ class Game
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?GameType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(GameType $type): static
     {
         $this->type = $type;
 
