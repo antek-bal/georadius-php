@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Stats;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -33,23 +32,10 @@ class UserFixtures extends Fixture
         ];
 
         foreach ($users as $data) {
-            $user = new User();
-            $user->setEmail($data['email']);
-            $user->setUsername($data['username']);
-            $user->setRoles($data['roles']);
-
             $hashedPassword = $this->hasher->hashPassword($user, $data['password']);
-            $user->setPassword($hashedPassword);
+            $user = new User($data['email'], $hashedPassword, $data['username'], $data['roles']);
 
             $manager->persist($user);
-
-            $stats = new Stats();
-            $stats->setUser($user);
-            $stats->setGamesPlayed(0);
-            $stats->setHighScore(0);
-            $stats->setDailyStreak(0);
-
-            $manager->persist($stats);
         }
 
         $manager->flush();
