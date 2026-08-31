@@ -10,12 +10,13 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class GameManager
 {
-    private const BASE_RADIUS = 100.0;
+    private const BASE_RADIUS = 100;
 
     public function __construct(
         private CityRepository $repository,
         private EntityManagerInterface $manager,
         private DistanceCalculator $calculator,
+        private StatsManager $statsManager,
     ) {
     }
 
@@ -36,7 +37,7 @@ class GameManager
 
     public function guess(string $cityName, Game $game): bool
     {
-        if ($game->getDurationSec() > 0) {
+        if ($game->getAttemptsLeft() <= 0) {
             return false;
         }
 
@@ -84,6 +85,8 @@ class GameManager
             ->setScore($score)
             ->setDurationSec($duration)
             ->setMaxRadius($score * self::BASE_RADIUS);
+
+        $this->statsManager->updateStats($game->getUser(), $game);
 
         $this->save($game);
     }
