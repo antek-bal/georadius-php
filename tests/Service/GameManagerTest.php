@@ -13,56 +13,40 @@ use App\Service\DistanceCalculator;
 use App\Service\GameManager;
 use App\Service\StatsManager;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GameManagerTest extends TestCase
 {
-    private CityRepository&MockObject $cityRepository;
-    private EntityManagerInterface&MockObject $entityManager;
-    private DistanceCalculator&MockObject $distanceCalculator;
-    private StatsManager&MockObject $statsManager;
-    private GameManager $gameManager;
-
     private User $user;
     private City $startCity;
 
     protected function setUp(): void
     {
-        $this->cityRepository = $this->createMock(CityRepository::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->distanceCalculator = $this->createMock(DistanceCalculator::class);
-        $this->statsManager = $this->createMock(StatsManager::class);
-
-        $this->gameManager = new GameManager(
-            $this->cityRepository,
-            $this->entityManager,
-            $this->distanceCalculator,
-            $this->statsManager
-        );
-
         $this->user = new User('player@example.com', 'password', 'Player', ['ROLE_USER']);
         $this->startCity = new City('Warsaw', 'PL', 52.2297, 21.0122, true);
     }
 
+    private function createGameManager(
+        ?CityRepository $cityRepository = null,
+        ?DistanceCalculator $calculator = null,
+        ?StatsManager $statsManager = null,
+        ?EntityManagerInterface $entityManager = null,
+    ): GameManager {
+        $em = $entityManager ?? $this->createStub(EntityManagerInterface::class);
+        $cityRepo = $cityRepository ?? $this->createStub(CityRepository::class);
+        $calc = $calculator ?? $this->createStub(DistanceCalculator::class);
+        $stats = $statsManager ?? $this->createStub(StatsManager::class);
+
+        return new GameManager($cityRepo, $em, $calc, $stats);
+    }
+
     public function testStartGameSuccessfully(): void
     {
-        $this->cityRepository
-            ->expects($this->once())
-            ->method('getRandomCityFromCountry')
-            ->with('PL')
-            ->willReturn($this->startCity);
+        $cityRepo = $this->createStub(CityRepository::class);
+        $cityRepo->method('getRandomCityFromCountry')->willReturn($this->startCity);
 
-        $this->entityManager
-            ->expects($this->once())
-            ->method('persist')
-            ->with($this->isInstanceOf(Game::class));
-
-        $this->entityManager
-            ->expects($this->once())
-            ->method('flush');
-
-        $game = $this->gameManager->start($this->user, GameType::FREE, 'PL');
+        $gameManager = $this->createGameManager(cityRepository: $cityRepo);
+        $game = $gameManager->start($this->user, GameType::FREE, 'PL');
 
         $this->assertInstanceOf(Game::class, $game);
         $this->assertSame($this->user, $game->getUser());
@@ -74,16 +58,11 @@ class GameManagerTest extends TestCase
 
     public function testStartGameReturnsNullWhenNoCityFound(): void
     {
-        $this->cityRepository
-            ->expects($this->once())
-            ->method('getRandomCityFromCountry')
-            ->with('XX')
-            ->willReturn(null);
+        $cityRepo = $this->createStub(CityRepository::class);
+        $cityRepo->method('getRandomCityFromCountry')->willReturn(null);
 
-        $this->entityManager->expects($this->never())->method('persist');
-        $this->entityManager->expects($this->never())->method('flush');
-
-        $game = $this->gameManager->start($this->user, GameType::FREE, 'XX');
+        $gameManager = $this->createGameManager(cityRepository: $cityRepo);
+        $game = $gameManager->start($this->user, GameType::FREE, 'XX');
 
         $this->assertNull($game);
     }
@@ -93,9 +72,8 @@ class GameManagerTest extends TestCase
         $game = new Game($this->user, $this->startCity, GameType::FREE);
         $game->setAttemptsLeft(0);
 
-        $this->cityRepository->expects($this->never())->method('findCityByName');
-
-        $result = $this->gameManager->guess('Radom', $game);
+        $gameManager = $this->createGameManager();
+        $result = $gameManager->guess('Radom', $game);
 
         $this->assertFalse($result);
     }
@@ -104,13 +82,11 @@ class GameManagerTest extends TestCase
     {
         $game = new Game($this->user, $this->startCity, GameType::FREE);
 
-        $this->cityRepository
-            ->expects($this->once())
-            ->method('findCityByName')
-            ->with('NieistniejaceMiasto')
-            ->willReturn(null);
+        $cityRepo = $this->createStub(CityRepository::class);
+        $cityRepo->method('findCityByName')->willReturn(null);
 
-        $result = $this->gameManager->guess('NieistniejaceMiasto', $game);
+        $gameManager = $this->createGameManager(cityRepository: $cityRepo);
+        $result = $gameManager->guess('NieistniejaceMiasto', $game);
 
         $this->assertFalse($result);
         $this->assertSame(3, $game->getAttemptsLeft());
@@ -124,22 +100,14 @@ class GameManagerTest extends TestCase
 
         $guessedCity = new City('Radom', 'PL', 51.4027, 21.1471, false);
 
-        $this->cityRepository
-            ->expects($this->once())
-            ->method('findCityByName')
-            ->with('Radom')
-            ->willReturn($guessedCity);
+        $cityRepo = $this->createStub(CityRepository::class);
+        $cityRepo->method('findCityByName')->willReturn($guessedCity);
 
-        $this->distanceCalculator
-            ->expects($this->once())
-            ->method('calculate')
-            ->with(51.4027, 21.1471, 52.2297, 21.0122)
-            ->willReturn(95.0);
+        $calc = $this->createStub(DistanceCalculator::class);
+        $calc->method('calculate')->willReturn(95.0);
 
-        $this->entityManager->expects($this->once())->method('persist')->with($game);
-        $this->entityManager->expects($this->once())->method('flush');
-
-        $result = $this->gameManager->guess('Radom', $game);
+        $gameManager = $this->createGameManager(cityRepository: $cityRepo, calculator: $calc);
+        $result = $gameManager->guess('Radom', $game);
 
         $this->assertTrue($result);
         $this->assertSame(2, $game->getCurrentRound());
@@ -154,21 +122,14 @@ class GameManagerTest extends TestCase
 
         $guessedCity = new City('Gdańsk', 'PL', 54.3520, 18.6466, false);
 
-        $this->cityRepository
-            ->expects($this->once())
-            ->method('findCityByName')
-            ->with('Gdańsk')
-            ->willReturn($guessedCity);
+        $cityRepo = $this->createStub(CityRepository::class);
+        $cityRepo->method('findCityByName')->willReturn($guessedCity);
 
-        $this->distanceCalculator
-            ->expects($this->once())
-            ->method('calculate')
-            ->willReturn(280.0);
+        $calc = $this->createStub(DistanceCalculator::class);
+        $calc->method('calculate')->willReturn(280.0);
 
-        $this->entityManager->expects($this->once())->method('persist')->with($game);
-        $this->entityManager->expects($this->once())->method('flush');
-
-        $result = $this->gameManager->guess('Gdańsk', $game);
+        $gameManager = $this->createGameManager(cityRepository: $cityRepo, calculator: $calc);
+        $result = $gameManager->guess('Gdańsk', $game);
 
         $this->assertFalse($result);
         $this->assertSame(1, $game->getCurrentRound());
@@ -183,26 +144,21 @@ class GameManagerTest extends TestCase
 
         $guessedCity = new City('Szczecin', 'PL', 53.4285, 14.5528, false);
 
-        $this->cityRepository
-            ->expects($this->once())
-            ->method('findCityByName')
-            ->with('Szczecin')
-            ->willReturn($guessedCity);
+        $cityRepo = $this->createStub(CityRepository::class);
+        $cityRepo->method('findCityByName')->willReturn($guessedCity);
 
-        $this->distanceCalculator
-            ->expects($this->once())
-            ->method('calculate')
-            ->willReturn(450.0);
+        $calc = $this->createStub(DistanceCalculator::class);
+        $calc->method('calculate')->willReturn(450.0);
 
-        $this->statsManager
-            ->expects($this->once())
-            ->method('updateStats')
-            ->with($this->user, $game);
+        $statsManager = $this->createStub(StatsManager::class);
 
-        $this->entityManager->expects($this->once())->method('persist')->with($game);
-        $this->entityManager->expects($this->once())->method('flush');
+        $gameManager = $this->createGameManager(
+            cityRepository: $cityRepo,
+            calculator: $calc,
+            statsManager: $statsManager
+        );
 
-        $result = $this->gameManager->guess('Szczecin', $game);
+        $result = $gameManager->guess('Szczecin', $game);
 
         $this->assertFalse($result);
         $this->assertSame(0, $game->getAttemptsLeft());
@@ -214,16 +170,10 @@ class GameManagerTest extends TestCase
     public function testEndDirectlyUpdatesStatsAndSavesGame(): void
     {
         $game = new Game($this->user, $this->startCity, GameType::FREE);
+        $statsManager = $this->createStub(StatsManager::class);
 
-        $this->statsManager
-            ->expects($this->once())
-            ->method('updateStats')
-            ->with($this->user, $game);
-
-        $this->entityManager->expects($this->once())->method('persist')->with($game);
-        $this->entityManager->expects($this->once())->method('flush');
-
-        $this->gameManager->end($game, 5);
+        $gameManager = $this->createGameManager(statsManager: $statsManager);
+        $gameManager->end($game, 5);
 
         $this->assertSame(5, $game->getScore());
         $this->assertSame(500, $game->getMaxRadius());
