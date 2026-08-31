@@ -22,7 +22,7 @@ class GameManagerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->user = new User('player@example.com', 'password', 'Player', ['ROLE_USER']);
+        $this->user = new User('player@example.com', 'password', 'Player');
         $this->startCity = new City('Warsaw', 'PL', 52.2297, 21.0122, true);
     }
 

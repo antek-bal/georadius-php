@@ -39,7 +39,7 @@ class StatsTest extends KernelTestCase
 
     public function testGetStatsWithoutExistingUser(): void
     {
-        $user = new User('abc@test.com', 'pass1234!!!', 'abc', ['ROLE_USER']);
+        $user = new User('abc@test.com', 'pass1234!!!', 'abc');
         $stats = $this->repository->getStatsByUser($user);
 
         $this->assertNull($stats);
@@ -47,7 +47,7 @@ class StatsTest extends KernelTestCase
 
     private function loadTestUsers(): User
     {
-        $userTest = new User('johndoe@gmail.com', 'password123!', 'johndoe', ['ROLE_USER']);
+        $userTest = new User('johndoe@gmail.com', 'password123!', 'johndoe');
 
         $this->entityManager->persist($userTest);
         $this->entityManager->flush();
