@@ -32,8 +32,10 @@ class UserFixtures extends Fixture
         ];
 
         foreach ($users as $data) {
+            $user = new User($data['email'], '', $data['username'], $data['roles']);
+
             $hashedPassword = $this->hasher->hashPassword($user, $data['password']);
-            $user = new User($data['email'], $hashedPassword, $data['username'], $data['roles']);
+            $user->setPassword($hashedPassword);
 
             $manager->persist($user);
         }
