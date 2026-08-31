@@ -38,7 +38,7 @@ class Game
     private ?int $durationSec = null;
 
     #[ORM\Column]
-    private ?float $maxRadius = null;
+    private ?int $maxRadius = null;
 
     #[ORM\Column]
     private ?int $currentRound = null;
@@ -148,12 +148,12 @@ class Game
         return $this;
     }
 
-    public function getMaxRadius(): ?float
+    public function getMaxRadius(): ?int
     {
         return $this->maxRadius;
     }
 
-    public function setMaxRadius(float $maxRadius): static
+    public function setMaxRadius(int $maxRadius): static
     {
         $this->maxRadius = $maxRadius;
 
