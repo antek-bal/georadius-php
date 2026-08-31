@@ -35,7 +35,7 @@ class AuthControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/register',
+            '/api/register',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -67,7 +67,7 @@ class AuthControllerTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            '/register',
+            '/api/register',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
