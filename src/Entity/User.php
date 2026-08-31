@@ -48,12 +48,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $games;
 
-    public function __construct(string $email, string $password, string $username, array $roles)
+    public function __construct(string $email, string $password, string $username)
     {
         $this->email = $email;
         $this->password = $password;
         $this->username = $username;
-        $this->roles = $roles;
+        $this->roles = ['ROLE_USER'];
         $this->stats = new Stats($this);
         $this->subscriptions = new ArrayCollection();
         $this->games = new ArrayCollection();
