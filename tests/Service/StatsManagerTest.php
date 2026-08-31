@@ -49,7 +49,7 @@ class StatsManagerTest extends KernelTestCase
         $this->statsManager->updateStats($user, $game);
 
         $stats = $user->getStats();
-        
+
         $this->assertEquals(1, $stats->getGamesPlayed());
         $this->assertEquals(5, $stats->getHighScore());
     }
