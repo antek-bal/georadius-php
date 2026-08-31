@@ -16,28 +16,56 @@ class CityRepository extends ServiceEntityRepository
         parent::__construct($registry, City::class);
     }
 
-//    /**
-//     * @return City[] Returns an array of City objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function getRandomCity(): ?City
+    {
+        $cities = $this->getStartingCities();
 
-//    public function findOneBySomeField($value): ?City
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        if (empty($cities)) {
+            return null;
+        }
+
+        $randomIndex = array_rand($cities);
+
+        return $cities[$randomIndex];
+    }
+
+    public function getRandomCityFromCountry(string $countryCode): ?City
+    {
+        $cities = $this->getStartingCities();
+
+        $filteredCities = array_filter($cities, function (City $city) use ($countryCode) {
+            return $city->getCountryCode() === $countryCode;
+        });
+
+        if (empty($filteredCities)) {
+            return null;
+        }
+
+        $randomIndex = array_rand($filteredCities);
+
+        return $filteredCities[$randomIndex];
+    }
+
+    public function findCityByName(string $cityName): ?City
+    {
+        $city = $this->createQueryBuilder('c')
+            ->andWhere('c.name = :val')
+            ->setParameter('val', $cityName)
+            ->getQuery()
+            ->getResult();
+
+        return $city[0] ?? null;
+    }
+
+    /**
+     * @return City[]
+     */
+    private function getStartingCities(): array
+    {
+        return $cities = $this->createQueryBuilder('c')
+            ->andWhere('c.isStartingCity = :val')
+            ->setParameter('val', true)
+            ->getQuery()
+            ->getResult();
+    }
 }

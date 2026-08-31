@@ -26,6 +26,11 @@ class Stats
     #[ORM\Column]
     private ?int $dailyStreak = 0;
 
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

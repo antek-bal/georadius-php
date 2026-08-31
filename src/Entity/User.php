@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -49,8 +48,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $games;
 
-    public function __construct()
+    public function __construct(string $email, string $password, string $username)
     {
+        $this->email = $email;
+        $this->password = $password;
+        $this->username = $username;
+        $this->roles = ['ROLE_USER'];
+        $this->stats = new Stats($this);
         $this->subscriptions = new ArrayCollection();
         $this->games = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
@@ -119,7 +123,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -154,7 +157,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Subscription>
      */
-    public function getSubscription(): Collection
+    public function getSubscriptions(): Collection
     {
         return $this->subscriptions;
     }
