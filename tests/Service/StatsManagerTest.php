@@ -34,7 +34,7 @@ class StatsManagerTest extends KernelTestCase
 
     public function testUpdateStatsIncrementsGamesAndScore(): void
     {
-        $user = new User('test@test.com', 'password', 'tester', ['ROLE_USER']);
+        $user = new User('test@test.com', 'password', 'tester');
         $this->entityManager->persist($user);
 
         $city = new City('Warszawa', 'PL', 52.2297, 21.0122, true);

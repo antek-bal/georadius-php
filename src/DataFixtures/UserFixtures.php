@@ -21,18 +21,16 @@ class UserFixtures extends Fixture
                 'email' => 'andrew@example.com',
                 'password' => 'password123!',
                 'username' => 'andrewG',
-                'roles' => ['ROLE_ADMIN'],
             ],
             [
                 'email' => 'johndoe@gmail.com',
                 'password' => 'pass_123456',
                 'username' => 'JohnDoe',
-                'roles' => ['ROLE_USER'],
             ],
         ];
 
         foreach ($users as $data) {
-            $user = new User($data['email'], '', $data['username'], $data['roles']);
+            $user = new User($data['email'], '', $data['username']);
 
             $hashedPassword = $this->hasher->hashPassword($user, $data['password']);
             $user->setPassword($hashedPassword);
