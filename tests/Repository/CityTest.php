@@ -23,6 +23,7 @@ class CityTest extends KernelTestCase
         $this->entityManager = $container->get('doctrine')->getManager();
         $this->repository = $container->get(CityRepository::class);
 
+        $this->entityManager->createQuery('DELETE FROM App\Entity\Game')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\City')->execute();
     }
 

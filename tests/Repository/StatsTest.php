@@ -23,6 +23,7 @@ class StatsTest extends KernelTestCase
         $this->entityManager = $container->get('doctrine')->getManager();
         $this->repository = $container->get(StatsRepository::class);
 
+        $this->entityManager->createQuery('DELETE FROM App\Entity\Game')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\Stats')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
     }
