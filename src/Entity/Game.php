@@ -26,7 +26,7 @@ class Game
     private ?City $startingCity = null;
 
     #[ORM\Column(enumType: GameType::class)]
-    private ?string $type = null;
+    private ?GameType $type = null;
 
     #[ORM\Column]
     private ?int $score = null;
@@ -38,11 +38,25 @@ class Game
     private ?int $durationSec = null;
 
     #[ORM\Column]
-    private ?float $maxRadius = null;
+    private ?int $maxRadius = null;
 
-    public function __construct()
+    #[ORM\Column]
+    private ?int $currentRound = null;
+
+    #[ORM\Column]
+    private ?int $attemptsLeft = null;
+
+    public function __construct(User $user, City $startingCity, GameType $type)
     {
+        $this->user = $user;
+        $this->startingCity = $startingCity;
+        $this->type = $type;
         $this->playedAt = new \DateTimeImmutable();
+        $this->score = 0;
+        $this->durationSec = 0;
+        $this->maxRadius = 0;
+        $this->currentRound = 1;
+        $this->attemptsLeft = 3;
     }
 
     public function getId(): ?int
@@ -86,12 +100,12 @@ class Game
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?GameType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(GameType $type): static
     {
         $this->type = $type;
 
@@ -134,14 +148,38 @@ class Game
         return $this;
     }
 
-    public function getMaxRadius(): ?float
+    public function getMaxRadius(): ?int
     {
         return $this->maxRadius;
     }
 
-    public function setMaxRadius(float $maxRadius): static
+    public function setMaxRadius(int $maxRadius): static
     {
         $this->maxRadius = $maxRadius;
+
+        return $this;
+    }
+
+    public function getCurrentRound(): ?int
+    {
+        return $this->currentRound;
+    }
+
+    public function setCurrentRound(int $currentRound): static
+    {
+        $this->currentRound = $currentRound;
+
+        return $this;
+    }
+
+    public function getAttemptsLeft(): ?int
+    {
+        return $this->attemptsLeft;
+    }
+
+    public function setAttemptsLeft(int $attemptsLeft): static
+    {
+        $this->attemptsLeft = $attemptsLeft;
 
         return $this;
     }

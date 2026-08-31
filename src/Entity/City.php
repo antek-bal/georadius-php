@@ -29,6 +29,15 @@ class City
     #[ORM\Column]
     private ?bool $isStartingCity = null;
 
+    public function __construct(string $name, string $countryCode, float $latitude, float $longitude, bool $isStartingCity)
+    {
+        $this->name = $name;
+        $this->countryCode = $countryCode;
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+        $this->isStartingCity = $isStartingCity;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
