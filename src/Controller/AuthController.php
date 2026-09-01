@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\DTO\RegisterUserDto;
 use App\Entity\User;
 use App\Service\UserManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,21 +21,6 @@ class AuthController extends AbstractController
     public function __construct(
         private readonly UserManager $userManager,
     ) {
-    }
-
-    #[Route('/me', name: 'me', methods: ['GET'])]
-    public function me(#[CurrentUser] ?User $user): JsonResponse
-    {
-        if (null === $user) {
-            return $this->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
-        }
-
-        return $this->json([
-            'id' => $user->getId(),
-            'email' => $user->getEmail(),
-            'username' => $user->getUsername(),
-            'roles' => $user->getRoles(),
-        ]);
     }
 
     #[Route('/register', name: 'register', methods: ['POST'])]
@@ -58,5 +44,37 @@ class AuthController extends AbstractController
             'email' => $user->getEmail(),
             'username' => $user->getUsername(),
         ], Response::HTTP_CREATED);
+    }
+
+    #[Route('/login', name: 'login', methods: ['POST'])]
+    public function login(#[CurrentUser] ?User $user, JWTTokenManagerInterface $jwtManager): Response
+    {
+        if (null === $user) {
+            return $this->json([
+                'message' => 'Missing credentials.',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $token = $jwtManager->create($user);
+
+        return $this->json([
+            'user' => $user->getUserIdentifier(),
+            'token' => $token,
+        ]);
+    }
+
+    #[Route('/me', name: 'me', methods: ['GET'])]
+    public function me(#[CurrentUser] ?User $user): JsonResponse
+    {
+        if (null === $user) {
+            return $this->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        return $this->json([
+            'id' => $user->getId(),
+            'email' => $user->getEmail(),
+            'username' => $user->getUsername(),
+            'roles' => $user->getRoles(),
+        ]);
     }
 }
