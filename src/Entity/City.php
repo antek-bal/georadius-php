@@ -17,19 +17,19 @@ class City
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private string $name;
 
     #[ORM\Column(length: 2)]
-    private ?string $countryCode = null;
+    private string $countryCode;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7)]
-    private ?float $latitude = null;
+    private float $latitude;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7)]
-    private ?float $longitude = null;
+    private float $longitude;
 
     #[ORM\Column]
-    private ?bool $isStartingCity = null;
+    private bool $isStartingCity;
 
     public function __construct(string $name, string $countryCode, float $latitude, float $longitude, bool $isStartingCity)
     {
@@ -45,7 +45,7 @@ class City
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -57,7 +57,7 @@ class City
         return $this;
     }
 
-    public function getCountryCode(): ?string
+    public function getCountryCode(): string
     {
         return $this->countryCode;
     }
@@ -69,7 +69,7 @@ class City
         return $this;
     }
 
-    public function getLatitude(): ?float
+    public function getLatitude(): float
     {
         return $this->latitude;
     }
@@ -81,7 +81,7 @@ class City
         return $this;
     }
 
-    public function getLongitude(): ?float
+    public function getLongitude(): float
     {
         return $this->longitude;
     }
@@ -93,7 +93,7 @@ class City
         return $this;
     }
 
-    public function isStartingCity(): ?bool
+    public function isStartingCity(): bool
     {
         return $this->isStartingCity;
     }

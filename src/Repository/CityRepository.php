@@ -54,20 +54,23 @@ class CityRepository extends ServiceEntityRepository
             ->andWhere('c.name = :val')
             ->setParameter('val', $cityName)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
 
-        return $city[0] ?? null;
+        return $city instanceof City ? $city : null;
     }
 
     /**
-     * @return City[]
+     * @return list<City>
      */
     private function getStartingCities(): array
     {
-        return $cities = $this->createQueryBuilder('c')
+        /** @var list<City> $cities */
+        $cities = $this->createQueryBuilder('c')
             ->andWhere('c.isStartingCity = :val')
             ->setParameter('val', true)
             ->getQuery()
             ->getResult();
+
+        return $cities;
     }
 }

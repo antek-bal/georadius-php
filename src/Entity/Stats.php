@@ -17,20 +17,23 @@ class Stats
 
     #[ORM\OneToOne(inversedBy: 'stats', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private User $user;
 
     #[ORM\Column]
-    private ?int $gamesPlayed = 0;
+    private int $gamesPlayed;
 
     #[ORM\Column]
-    private ?int $highScore = 0;
+    private int $highScore;
 
     #[ORM\Column]
-    private ?int $dailyStreak = 0;
+    private int $dailyStreak;
 
     public function __construct(User $user)
     {
         $this->user = $user;
+        $this->gamesPlayed = 0;
+        $this->highScore = 0;
+        $this->dailyStreak = 0;
     }
 
     public function getId(): ?int
@@ -38,7 +41,7 @@ class Stats
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
@@ -50,7 +53,7 @@ class Stats
         return $this;
     }
 
-    public function getGamesPlayed(): ?int
+    public function getGamesPlayed(): int
     {
         return $this->gamesPlayed;
     }
@@ -62,7 +65,7 @@ class Stats
         return $this;
     }
 
-    public function getHighScore(): ?int
+    public function getHighScore(): int
     {
         return $this->highScore;
     }
@@ -74,7 +77,7 @@ class Stats
         return $this;
     }
 
-    public function getDailyStreak(): ?int
+    public function getDailyStreak(): int
     {
         return $this->dailyStreak;
     }

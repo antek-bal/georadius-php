@@ -18,7 +18,9 @@ class AuthControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface);
+        $this->entityManager = $em;
 
         $this->entityManager->createQuery('DELETE FROM App\Entity\Stats')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\Game')->execute();
@@ -33,28 +35,38 @@ class AuthControllerTest extends WebTestCase
 
     public function testRegisterSuccess(): void
     {
+        $payload = json_encode([
+            'email' => 'test@test.pl',
+            'password' => 'password123!',
+            'username' => 'test',
+        ]);
+        assert(is_string($payload));
+
         $this->client->request(
             'POST',
             '/api/register',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            json_encode([
-                'email' => 'test@test.pl',
-                'password' => 'password123!',
-                'username' => 'test',
-            ])
+            $payload
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $content = $this->client->getResponse()->getContent();
+        $this->assertIsString($content);
+
+        $responseData = json_decode($content, true);
+        $this->assertIsArray($responseData);
         $this->assertArrayHasKey('id', $responseData);
         $this->assertSame('test@test.pl', $responseData['email']);
         $this->assertSame('test', $responseData['username']);
 
-        $userInDb = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'test@test.pl']);
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface);
+        $userInDb = $em->getRepository(User::class)->findOneBy(['email' => 'test@test.pl']);
+
         $this->assertNotNull($userInDb);
         $this->assertSame('test', $userInDb->getUsername());
     }
@@ -65,22 +77,29 @@ class AuthControllerTest extends WebTestCase
         $this->entityManager->persist($existingUser);
         $this->entityManager->flush();
 
+        $payload = json_encode([
+            'email' => 'johndoe@gmail.com',
+            'password' => 'password123!',
+            'username' => 'john_doe',
+        ]);
+        assert(is_string($payload));
+
         $this->client->request(
             'POST',
             '/api/register',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            json_encode([
-                'email' => 'johndoe@gmail.com',
-                'password' => 'password123!',
-                'username' => 'john_doe',
-            ])
+            $payload
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $content = $this->client->getResponse()->getContent();
+        $this->assertIsString($content);
+
+        $responseData = json_decode($content, true);
+        $this->assertIsArray($responseData);
         $this->assertSame('User with this email or username already exists.', $responseData['message']);
     }
 }

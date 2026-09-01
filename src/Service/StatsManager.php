@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Game;
+use App\Entity\Stats;
 use App\Entity\User;
 use App\Enum\GameType;
 use App\Repository\StatsRepository;
@@ -21,6 +22,10 @@ class StatsManager
     public function updateStats(User $user, Game $game): void
     {
         $stats = $this->repository->getStatsByUser($user);
+        if (null === $stats) {
+            $stats = new Stats($user);
+            $this->manager->persist($stats);
+        }
         $gamesPlayed = $stats->getGamesPlayed();
         $highScore = max($stats->getHighScore(), $game->getScore());
         $dailyStreak = GameType::DAILY === $game->getType() ? $stats->getDailyStreak() + 1 : $stats->getDailyStreak();

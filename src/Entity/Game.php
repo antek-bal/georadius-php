@@ -18,35 +18,35 @@ class Game
 
     #[ORM\ManyToOne(inversedBy: 'games')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private ?User $user;
 
     #[ORM\ManyToOne(inversedBy: 'games')]
     private ?DailyChallenge $dailyChallenge = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?City $startingCity = null;
+    private City $startingCity;
 
     #[ORM\Column(enumType: GameType::class)]
-    private ?GameType $type = null;
+    private GameType $type;
 
     #[ORM\Column]
-    private ?int $score = null;
+    private int $score;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $playedAt = null;
+    private \DateTimeImmutable $playedAt;
 
     #[ORM\Column]
-    private ?int $durationSec = null;
+    private int $durationSec;
 
     #[ORM\Column]
-    private ?int $maxRadius = null;
+    private int $maxRadius;
 
     #[ORM\Column]
-    private ?int $currentRound = null;
+    private int $currentRound;
 
     #[ORM\Column]
-    private ?int $attemptsLeft = null;
+    private int $attemptsLeft;
 
     public function __construct(User $user, City $startingCity, GameType $type)
     {
@@ -90,19 +90,19 @@ class Game
         return $this;
     }
 
-    public function getStartingCity(): ?City
+    public function getStartingCity(): City
     {
         return $this->startingCity;
     }
 
-    public function setStartingCity(?City $startingCity): static
+    public function setStartingCity(City $startingCity): static
     {
         $this->startingCity = $startingCity;
 
         return $this;
     }
 
-    public function getType(): ?GameType
+    public function getType(): GameType
     {
         return $this->type;
     }
@@ -114,7 +114,7 @@ class Game
         return $this;
     }
 
-    public function getScore(): ?int
+    public function getScore(): int
     {
         return $this->score;
     }
@@ -126,7 +126,7 @@ class Game
         return $this;
     }
 
-    public function getPlayedAt(): ?\DateTimeImmutable
+    public function getPlayedAt(): \DateTimeImmutable
     {
         return $this->playedAt;
     }
@@ -138,7 +138,7 @@ class Game
         return $this;
     }
 
-    public function getDurationSec(): ?int
+    public function getDurationSec(): int
     {
         return $this->durationSec;
     }
@@ -150,7 +150,7 @@ class Game
         return $this;
     }
 
-    public function getMaxRadius(): ?int
+    public function getMaxRadius(): int
     {
         return $this->maxRadius;
     }
@@ -162,7 +162,7 @@ class Game
         return $this;
     }
 
-    public function getCurrentRound(): ?int
+    public function getCurrentRound(): int
     {
         return $this->currentRound;
     }
@@ -174,7 +174,7 @@ class Game
         return $this;
     }
 
-    public function getAttemptsLeft(): ?int
+    public function getAttemptsLeft(): int
     {
         return $this->attemptsLeft;
     }

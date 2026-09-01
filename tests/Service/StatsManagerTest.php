@@ -6,9 +6,9 @@ namespace App\Tests\Service;
 
 use App\Entity\City;
 use App\Entity\Game;
-use App\Entity\Stats;
 use App\Entity\User;
 use App\Enum\GameType;
+use App\Repository\StatsRepository;
 use App\Service\StatsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -17,15 +17,22 @@ class StatsManagerTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
     private StatsManager $statsManager;
+    private StatsRepository $repository;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $container = static::getContainer();
 
-        $this->entityManager = $container->get(EntityManagerInterface::class);
-        $statsRepository = $this->entityManager->getRepository(Stats::class);
-        $this->statsManager = new StatsManager($statsRepository, $this->entityManager);
+        $em = $container->get(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface);
+        $this->entityManager = $em;
+
+        $repository = $container->get(StatsRepository::class);
+        assert($repository instanceof StatsRepository);
+        $this->repository = $repository;
+
+        $this->statsManager = new StatsManager($this->repository, $this->entityManager);
 
         $this->entityManager->createQuery('DELETE FROM App\Entity\Game')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\Stats')->execute();
