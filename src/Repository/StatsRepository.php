@@ -25,10 +25,12 @@ class StatsRepository extends ServiceEntityRepository
             return null;
         }
 
-        return $this->createQueryBuilder('s')
+        $stats = $this->createQueryBuilder('s')
             ->andWhere('s.user = :val')
             ->setParameter('val', $user)
             ->getQuery()
             ->getOneOrNullResult();
+
+        return $stats instanceof Stats ? $stats : null;
     }
 }

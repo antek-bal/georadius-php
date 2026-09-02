@@ -17,11 +17,15 @@ class CityTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-
         $container = static::getContainer();
 
-        $this->entityManager = $container->get('doctrine')->getManager();
-        $this->repository = $container->get(CityRepository::class);
+        $em = $container->get(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface);
+        $this->entityManager = $em;
+
+        $repository = $container->get(CityRepository::class);
+        assert($repository instanceof CityRepository);
+        $this->repository = $repository;
 
         $this->entityManager->createQuery('DELETE FROM App\Entity\Game')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\City')->execute();

@@ -22,7 +22,7 @@ class GameManager
     ) {
     }
 
-    public function start(User $user, GameType $type, ?string $countryCode = null): ?Game
+    public function start(User $user, GameType $type, string $countryCode): ?Game
     {
         $city = GameType::FREE === $type ? $this->repository->getRandomCityFromCountry($countryCode) : $this->repository->getRandomCity();
 
@@ -88,7 +88,10 @@ class GameManager
             ->setDurationSec($duration)
             ->setMaxRadius($score * self::BASE_RADIUS);
 
-        $this->statsManager->updateStats($game->getUser(), $game);
+        $user = $game->getUser();
+        if (null !== $user) {
+            $this->statsManager->updateStats($user, $game);
+        }
 
         $this->save($game);
     }

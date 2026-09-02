@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Service;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -14,6 +15,7 @@ class UserManagerTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
     private UserManager $userManager;
+    private UserRepository $repository;
 
     protected function setUp(): void
     {
@@ -23,9 +25,15 @@ class UserManagerTest extends KernelTestCase
         $hasher = $this->createStub(UserPasswordHasherInterface::class);
         $hasher->method('hashPassword')->willReturn('fake_hashed_password');
 
-        $this->entityManager = $container->get(EntityManagerInterface::class);
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $this->userManager = new UserManager($userRepository, $this->entityManager, $hasher);
+        $em = $container->get(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface);
+        $this->entityManager = $em;
+
+        $repository = $container->get(UserRepository::class);
+        assert($repository instanceof UserRepository);
+        $this->repository = $repository;
+
+        $this->userManager = new UserManager($this->repository, $this->entityManager, $hasher);
 
         $this->entityManager->createQuery('DELETE FROM App\Entity\Game')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\Stats')->execute();

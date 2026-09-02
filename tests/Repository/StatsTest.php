@@ -17,11 +17,15 @@ class StatsTest extends KernelTestCase
     protected function setup(): void
     {
         self::bootKernel();
-
         $container = static::getContainer();
 
-        $this->entityManager = $container->get('doctrine')->getManager();
-        $this->repository = $container->get(StatsRepository::class);
+        $em = $container->get(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface);
+        $this->entityManager = $em;
+
+        $repository = $container->get(StatsRepository::class);
+        assert($repository instanceof StatsRepository);
+        $this->repository = $repository;
 
         $this->entityManager->createQuery('DELETE FROM App\Entity\Game')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\Stats')->execute();

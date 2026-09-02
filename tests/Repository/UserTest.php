@@ -17,11 +17,15 @@ class UserTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-
         $container = static::getContainer();
 
-        $this->entityManager = $container->get('doctrine')->getManager();
-        $this->repository = $container->get(UserRepository::class);
+        $em = $container->get(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface);
+        $this->entityManager = $em;
+
+        $repository = $container->get(UserRepository::class);
+        assert($repository instanceof UserRepository);
+        $this->repository = $repository;
 
         $this->entityManager->createQuery('DELETE FROM App\Entity\Stats')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
