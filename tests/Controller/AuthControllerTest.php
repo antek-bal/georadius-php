@@ -33,7 +33,7 @@ class AuthControllerTest extends WebTestCase
         $this->entityManager->close();
     }
 
-    public function testRegisterSuccess(): void
+    protected function registerUser(): void
     {
         $payload = json_encode([
             'email' => 'test@test.pl',
@@ -50,6 +50,11 @@ class AuthControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json'],
             $payload
         );
+    }
+
+    public function testRegisterSuccess(): void
+    {
+        $this->registerUser();
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->assertResponseHeaderSame('content-type', 'application/json');
@@ -101,5 +106,57 @@ class AuthControllerTest extends WebTestCase
         $responseData = json_decode($content, true);
         $this->assertIsArray($responseData);
         $this->assertSame('User with this email or username already exists.', $responseData['message']);
+    }
+
+    public function testLoginSuccessWithEmail(): void
+    {
+        $this->registerUser();
+        $payload = json_encode([
+            'email' => 'test@test.pl',
+            'password' => 'password123!',
+        ]);
+        assert(is_string($payload));
+
+        $this->client->request(
+            'POST',
+            '/api/login',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            $payload
+        );
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+
+        $content = $this->client->getResponse()->getContent();
+        $this->assertIsString($content);
+
+        $responseData = json_decode($content, true);
+        $this->assertIsArray($responseData);
+        $this->assertArrayHasKey('user', $responseData);
+        $this->assertArrayHasKey('token', $responseData);
+    }
+
+    public function testLoginInvalidCredentials(): void
+    {
+        $this->registerUser();
+        $payload = json_encode([
+            'email' => 'johndoe@test.pl',
+            'password' => 'password123!',
+        ]);
+        assert(is_string($payload));
+
+        $this->client->request(
+            'POST',
+            '/api/login',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            $payload
+        );
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
     }
 }
