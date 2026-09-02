@@ -138,36 +138,6 @@ class AuthControllerTest extends WebTestCase
         $this->assertArrayHasKey('token', $responseData);
     }
 
-    // public function testLoginSuccessWithUsername(): void
-    // {
-    //     $this->registerUser();
-    //     $payload = json_encode([
-    //         'username' => 'test',
-    //         'password' => 'password123!',
-    //     ]);
-    //     assert(is_string($payload));
-
-    //     $this->client->request(
-    //         'POST',
-    //         '/api/login',
-    //         [],
-    //         [],
-    //         ['CONTENT_TYPE' => 'application/json'],
-    //         $payload
-    //     );
-
-    //     $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-    //     $this->assertResponseHeaderSame('content-type', 'application/json');
-
-    //     $content = $this->client->getResponse()->getContent();
-    //     $this->assertIsString($content);
-
-    //     $responseData = json_decode($content, true);
-    //     $this->assertIsArray($responseData);
-    //     $this->assertArrayHasKey('user', $responseData);
-    //     $this->assertArrayHasKey('token', $responseData);
-    // }
-
     public function testLoginInvalidCredentials(): void
     {
         $this->registerUser();
