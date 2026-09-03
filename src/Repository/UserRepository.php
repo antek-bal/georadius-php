@@ -27,4 +27,14 @@ class UserRepository extends ServiceEntityRepository
     {
         return $this->count(['username' => $username]) > 0;
     }
+
+    public function deleteUser(User $user): void
+    {
+        $this->createQueryBuilder('u')
+            ->delete()
+            ->where('u.id = :val')
+            ->setParameter('val', $user->getId())
+            ->getQuery()
+            ->execute();
+    }
 }
