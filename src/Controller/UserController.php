@@ -38,4 +38,15 @@ class UserController extends AbstractController
             'roles' => $editedUser->getRoles(),
         ]);
     }
+
+    #[Route('/users/me', name: 'get', methods: ['GET'])]
+    public function get(#[CurrentUser] User $user): JsonResponse
+    {
+        return $this->json([
+            'id' => $user->getId(),
+            'email' => $user->getEmail(),
+            'username' => $user->getUsername(),
+            'roles' => $user->getRoles(),
+        ]);
+    }
 }
