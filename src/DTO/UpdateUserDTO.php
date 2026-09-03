@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     expression: 'this.username !== null or this.password !== null',
     message: 'At least one field (username or password) must be provided.'
 )]
-final readonly class EditUserDTO
+final readonly class UpdateUserDTO
 {
     public function __construct(
         #[Assert\Length(
