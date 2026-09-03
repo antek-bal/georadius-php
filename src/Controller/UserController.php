@@ -49,4 +49,12 @@ class UserController extends AbstractController
             'roles' => $user->getRoles(),
         ]);
     }
+
+    #[Route('/users/me', name: 'delete', methods: ['DELETE'])]
+    public function delete(#[CurrentUser] User $user): JsonResponse
+    {
+        $this->userManager->delete($user);
+
+        return $this->json(['message' => 'User deleted successfully.'], Response::HTTP_NO_CONTENT);
+    }
 }
