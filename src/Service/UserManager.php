@@ -52,4 +52,9 @@ class UserManager
 
         return $user;
     }
+
+    public function delete(User $user): void
+    {
+        $this->repository->deleteUser($user);
+    }
 }
