@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\UpdateUserDTO;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,6 +30,24 @@ class UserManager
         $user->setPassword($hashedPassword);
 
         $this->manager->persist($user);
+        $this->manager->flush();
+
+        return $user;
+    }
+
+    public function edit(User $user, UpdateUserDTO $dto): ?User
+    {
+        if (null !== $dto->password && !$this->hasher->isPasswordValid($user, $dto->password)) {
+            $user->setPassword($this->hasher->hashPassword($user, $dto->password));
+        }
+
+        if (null !== $dto->username && $dto->username !== $user->getUsername()) {
+            if ($this->repository->existsByUsername($dto->username)) {
+                return null;
+            }
+            $user->setUsername($dto->username);
+        }
+
         $this->manager->flush();
 
         return $user;
