@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
-#[Route('/api', name: 'api_')]
+#[Route('/api/users', name: 'api_users_')]
 class UserController extends AbstractController
 {
     public function __construct(
@@ -23,13 +23,13 @@ class UserController extends AbstractController
     ) {
     }
 
-    #[Route('/users/me', name: 'get', methods: ['GET'])]
+    #[Route('/me', name: 'get', methods: ['GET'])]
     public function get(#[CurrentUser] User $user): JsonResponse
     {
         return $this->json(UserResponseDTO::fromEntity($user));
     }
 
-    #[Route('/users/me', name: 'edit', methods: ['PATCH'])]
+    #[Route('/me', name: 'edit', methods: ['PATCH'])]
     public function edit(#[CurrentUser] User $user, #[MapRequestPayload] UpdateUserDTO $dto): JsonResponse
     {
         $editedUser = $this->userManager->edit($user, $dto);
@@ -38,10 +38,10 @@ class UserController extends AbstractController
             return $this->json(['message' => 'Username is already taken.'], Response::HTTP_CONFLICT);
         }
 
-        return $this->json(UserResponseDTO::fromEntity($user));
+        return $this->json(UserResponseDTO::fromEntity($editedUser));
     }
 
-    #[Route('/users/me', name: 'delete', methods: ['DELETE'])]
+    #[Route('/me', name: 'delete', methods: ['DELETE'])]
     public function delete(#[CurrentUser] User $user): JsonResponse
     {
         $this->userManager->delete($user);
