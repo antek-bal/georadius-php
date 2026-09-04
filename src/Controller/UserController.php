@@ -55,6 +55,6 @@ class UserController extends AbstractController
     {
         $this->userManager->delete($user);
 
-        return $this->json(['message' => 'User deleted successfully.'], Response::HTTP_NO_CONTENT);
+        return $this->json(['message' => 'User deleted successfully.'], Response::HTTP_OK);
     }
 }
