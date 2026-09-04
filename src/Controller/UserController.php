@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\DTO\UpdateUserDTO;
+use App\DTO\UserResponseDTO;
 use App\Entity\User;
 use App\Service\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +23,12 @@ class UserController extends AbstractController
     ) {
     }
 
+    #[Route('/users/me', name: 'get', methods: ['GET'])]
+    public function get(#[CurrentUser] User $user): JsonResponse
+    {
+        return $this->json(UserResponseDTO::fromEntity($user));
+    }
+
     #[Route('/users/me', name: 'edit', methods: ['PATCH'])]
     public function edit(#[CurrentUser] User $user, #[MapRequestPayload] UpdateUserDTO $dto): JsonResponse
     {
@@ -31,23 +38,7 @@ class UserController extends AbstractController
             return $this->json(['message' => 'Username is already taken.'], Response::HTTP_CONFLICT);
         }
 
-        return $this->json([
-            'id' => $editedUser->getId(),
-            'email' => $editedUser->getEmail(),
-            'username' => $editedUser->getUsername(),
-            'roles' => $editedUser->getRoles(),
-        ]);
-    }
-
-    #[Route('/users/me', name: 'get', methods: ['GET'])]
-    public function get(#[CurrentUser] User $user): JsonResponse
-    {
-        return $this->json([
-            'id' => $user->getId(),
-            'email' => $user->getEmail(),
-            'username' => $user->getUsername(),
-            'roles' => $user->getRoles(),
-        ]);
+        return $this->json(UserResponseDTO::fromEntity($user));
     }
 
     #[Route('/users/me', name: 'delete', methods: ['DELETE'])]
