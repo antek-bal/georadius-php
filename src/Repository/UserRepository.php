@@ -30,11 +30,8 @@ class UserRepository extends ServiceEntityRepository
 
     public function deleteUser(User $user): void
     {
-        $this->createQueryBuilder('u')
-            ->delete()
-            ->where('u.id = :val')
-            ->setParameter('val', $user->getId())
-            ->getQuery()
-            ->execute();
+        $em = $this->getEntityManager();
+        $em->remove($user);
+        $em->flush();
     }
 }
