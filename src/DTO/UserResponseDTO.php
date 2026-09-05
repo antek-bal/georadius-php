@@ -12,6 +12,9 @@ final readonly class UserResponseDTO
         public int $id,
         public string $email,
         public string $username,
+        /**
+         * @var list<string> The user roles
+         */
         public array $roles,
     ) {
     }
